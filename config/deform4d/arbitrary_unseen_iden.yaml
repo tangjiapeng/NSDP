@@ -1,0 +1,94 @@
+experiment: 
+    out_dir:  /cluster_HDD/umoja/jtang/nsdp_outdir
+    name: deform4d_arbitrary
+
+data:
+    type: 'deform4d'
+    dataset_dir: '/cluster/balrog/jtang/DeformingThings4D_processed_dataset/animals'
+    split_dir: './data/splits/'
+    interval: 3
+    arbitrary: true
+    inverse: false
+    fix_coord_system: false
+    num_surf_samples: 5000
+    num_space_samples: 5000
+    partial_range: 0.1
+    noise_level: 0.0
+    partial_shape_ratio: 1.0
+    norm_params_file: 'orig_to_gaps.txt'
+    surface_flow_file: 'surface_points.npz'
+    space_flow_file: 'flow.npz'
+    mesh_file: 'mesh_orig.obj' #'model_normalized.obj'
+    userhandle:
+        cliptail: false
+        head: false
+        tail: false
+        frontleftfoot: false
+        frontrightfoot: false
+        behindleftfoot: false
+        behindrightfoot: false
+        xtrans: 0.0
+        ytrans: 0.0
+        ztrans: 0.0
+
+model:
+    type: 'arbitrary'
+    use_normals: false
+    encoder: 'pointransformer'
+    encoder_kwargs:
+        npoints_per_layer: [5000, 500, 100]
+        nneighbor: 16
+        nneighbor_reduced: 10
+        nfinal_transformers: 3
+        d_transformer: 256
+        d_reduced: 120
+        full_SA: true
+    decoder: 'crossatten'
+    decoder_kwargs:
+        dim_inp: 256
+        dim: 200
+        nneigh: 7
+        hidden_dim: 128
+        out_dim: 3
+
+training: 
+    iden_split: 'identity_seen'
+    motion_split: 'train_seen'
+    load_mesh: false
+    num_sampled_pairs: 36000
+    epochs: 100
+    save_frequency: 10
+    batch_size: 8
+    optimizer: Adam
+    lr: 0.00005
+    lr_step: 50
+    lr_decay: 0.1
+    weight_decay: 0.0
+    weight_forward_file: "./pretrained/forward.pt"
+    weight_backward_file: "./pretrained/backward.pt" 
+
+validation:
+    iden_split: "identity_unseen"
+    motion_split: "test_unseen_identities"
+    load_mesh: false
+    num_sampled_pairs: 300
+    frequency: 1
+    batch_size: 8
+
+test:
+    iden_split: "identity_unseen"
+    motion_split: "test_unseen_identities"
+    load_mesh: true
+    num_sampled_pairs: 300
+    batch_size: 1
+    generate_mesh: true
+    mesh_folder: 'meshes'
+    mesh_format: 'ply'
+    generate_pointcloud: true
+    pointcloud_folder: 'pointclouds'
+    pointcloud_format: 'ply'
+    weight_file: "./pretrained/arbitrary.pt"
+
+logger:
+    type: "wandb"
+    project: "NSDP"

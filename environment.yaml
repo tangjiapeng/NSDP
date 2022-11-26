@@ -1,0 +1,23 @@
+name: nsdp
+channels:
+  - conda-forge
+  - pytorch
+  - defaults
+dependencies:
+  - cython=0.29.15
+  - trimesh=3.6.18
+  - open3d=0.15.2
+  - pytorch==1.11.0
+  - torchvision==0.12.0
+  - cudatoolkit=11.3 
+  - python=3.8.13
+  - pykdtree=1.3.1
+  - tensorboard=2.7.0
+  - future=0.18.2
+  - numpy=1.21.3
+  - pandas=1.3.4
+  - pip
+  - pip:
+      - pymcubes==0.1.0
+      - pyyaml
+      - wandb
